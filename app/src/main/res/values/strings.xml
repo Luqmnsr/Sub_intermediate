@@ -1,0 +1,82 @@
+<resources>
+    <string name="app_name">Story App</string>
+
+    <!-- Welcome -->
+    <string name="title_welcome_page">Selamat datang di Story App!</string>
+    <string name="message_welcome_page">Mau kirim-kirim cerita? Bolehh</string>
+
+    <!-- Register -->
+    <string name="title_signup_page">Lengkapi data dirimu di bawah ini ya</string>
+    <string name="name">Nama</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Login -->
+    <string name="message_login_page">Masukkan dulu datamu ya</string>
+    <string name="title_login_page">Sudah siap untuk mengirim cerita?</string>
+
+    <!-- Main -->
+    <string name="message_main_page">Selamat datang di Story App.</string>
+    <string name="greeting">Halo %1$s,</string>
+    <string name="logout">Keluar</string>
+
+    <!-- Text Hint -->
+    <string name="masukkan_password_anda">Masukkan Password Anda</string>
+    <string name="masukkan_email_anda">Masukkan Email Anda</string>
+    <string name="masukkan_nama_anda">Masukkan Nama Anda</string>
+
+    <!-- Button -->
+    <string name="login">Masuk</string>
+    <string name="login_button_text_enabled">Masuk</string>
+    <string name="login_button_text_disabled">Masuk</string>
+    <string name="register">Daftar</string>
+    <string name="register_button_text_enabled">Daftar</string>
+    <string name="register_button_text_disabled">Daftar</string>
+
+    <!-- Password -->
+    <string name="password_error_message">Password harus terdiri dari minimal 8 karakter</string>
+
+    <!-- Dialog Login-->
+    <string name="login_success_title">Yeah!</string>
+    <string name="login_success_message">Anda berhasil masuk %1$s. Tidak sabar untuk mengupload cerita, ya?</string>
+    <string name="login_success_positive_button">Lanjut</string>
+
+    <string name="login_error_title">Oops!</string>
+    <string name="login_error_message_email_used">Email/password untuk %1$s salah!. Silakan ulangi kembali.</string>
+    <string name="login_error_positive_button">Coba Lagi</string>
+
+    <!-- Dialog Register -->
+    <string name="register_success_title">Yeah!</string>
+    <string name="register_success_message">Akun dengan email %1$s sudah jadi nih. Yuk, login ke dalam aplikasinya.</string>
+    <string name="register_success_positive_button">Lanjut</string>
+
+    <string name="register_error_title">Oops!</string>
+    <string name="register_error_message_email_used">Email %1$s sudah digunakan. Silakan coba dengan email lain.</string>
+    <string name="register_error_positive_button">Coba Lagi</string>
+    <string name="empty_field_error">Harap isi semua kolom</string>
+
+    <!-- Upload -->
+    <string name="image_story">Gambar</string>
+    <string name="story_add">Tambah Cerita</string>
+    <string name="story_id_not_found">Id cerita tidak ditemukan</string>
+    <string name="camera">Kamera</string>
+    <string name="gallery">Galeri</string>
+    <string name="description">Deskripsi</string>
+    <string name="upload">Kirim</string>
+    <string name="story_image">Gambar Cerita</string>
+    <string name="failed_upload">Terjadi kesalahan dalam mengirim</string>
+    <string name="success_upload">Sukses mengunggah</string>
+    <string name="not_valid">Tidak valid</string>
+    <string name="done">Selesai</string>
+    <string name="cancel">Batal</string>
+    <string name="upload_confirmation">Selesai Mengunggah?</string>
+
+    <!-- Error -->
+    <string name="email_invalid">Email salah</string>
+    <string name="unavailable_story">Tidak ada cerita tersedia</string>
+    <string name="failed_to_load_stories">Gagal memuat cerita</string>
+    <string name="invalid_email">Email salah!</string>
+    <string name="empty_name">Nama tidak boleh kosong</string>
+    <string name="name_too_short">Nama terlalu pendek</string>
+    <string name="email_empty">Email Kosong</string>
+</resources>

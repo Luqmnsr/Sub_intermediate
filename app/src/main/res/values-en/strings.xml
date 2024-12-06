@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Story App</string>
+
+    <!-- Welcome -->
+    <string name="title_welcome_page">Welcome to Story App!</string>
+    <string name="message_welcome_page">Want to send stories? Go ahead</string>
+
+    <!-- Register -->
+    <string name="title_signup_page">Fill in your details below</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+
+    <!-- Login -->
+    <string name="message_login_page">Please enter your details</string>
+    <string name="title_login_page">Ready to send stories?</string>
+
+    <!-- Main -->
+    <string name="message_main_page">Welcome to Story App.</string>
+    <string name="greeting">Hello %1$s,</string>
+    <string name="logout">Logout</string>
+
+    <!-- Text Hint -->
+    <string name="masukkan_password_anda">Enter Your Password</string>
+    <string name="masukkan_email_anda">Enter Your Email</string>
+    <string name="masukkan_nama_anda">Enter Your Name</string>
+
+    <!-- Button -->
+    <string name="login">Login</string>
+    <string name="login_button_text_enabled">Login</string>
+    <string name="login_button_text_disabled">Login</string>
+    <string name="register">Register</string>
+    <string name="register_button_text_enabled">Register</string>
+    <string name="register_button_text_disabled">Register</string>
+
+    <!-- Password -->
+    <string name="password_error_message">Password must be at least 8 characters long</string>
+
+    <!-- Dialog Login-->
+    <string name="login_success_title">Yeah!</string>
+    <string name="login_success_message">You have successfully logged in %1$s. We can\'t wait for you to upload a story!</string>
+    <string name="login_success_positive_button">Continue</string>
+
+    <string name="login_error_title">Oops!</string>
+    <string name="login_error_message_email_used">The email/password for %1$s is incorrect! Please try again.</string>
+    <string name="login_error_positive_button">Try Again</string>
+
+    <!-- Dialog Register -->
+    <string name="register_success_title">Yeah!</string>
+    <string name="register_success_message">An account with the email %1$s has been created. Now, login to the app.</string>
+    <string name="register_success_positive_button">Continue</string>
+
+    <string name="register_error_title">Oops!</string>
+    <string name="register_error_message_email_used">The email %1$s is already in use. Please try another email.</string>
+    <string name="register_error_positive_button">Try Again</string>
+    <string name="empty_field_error">Please fill out all fields</string>
+
+    <!-- Upload -->
+    <string name="image_story">Image</string>
+    <string name="story_add">Add Story</string>
+    <string name="story_id_not_found">Story ID not found</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="description">Description</string>
+    <string name="upload">Send</string>
+    <string name="story_image">Story Image</string>
+    <string name="failed_upload">There was an error sending</string>
+    <string name="success_upload">Successfully upload</string>
+    <string name="not_valid">Not valid</string>
+    <string name="upload_confirmation">Done Upload?</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Error -->
+    <string name="email_invalid">Invalid email</string>
+    <string name="unavailable_story">No stories available</string>
+    <string name="failed_to_load_stories">Failed to load stories</string>
+    <string name="invalid_email">Invalid email!</string>
+    <string name="empty_name">Name cannot be empty</string>
+    <string name="name_too_short">Name is too short</string>
+    <string name="email_empty">Email empty</string>
+</resources>
