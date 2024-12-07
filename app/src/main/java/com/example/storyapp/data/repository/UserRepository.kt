@@ -14,8 +14,10 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import com.example.storyapp.data.results.Result
+import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.IOException
 
 class UserRepository private constructor(
     private val userPreference: UserPreference,
@@ -23,7 +25,7 @@ class UserRepository private constructor(
 ) {
 
     suspend fun saveSession(user: UserModel) {
-        userPreference.saveSession(user)
+        return userPreference.saveSession(user)
     }
 
     fun getSession(): Flow<UserModel> {
@@ -44,11 +46,15 @@ class UserRepository private constructor(
         try {
             val response = apiService.register(name, email, password)
             emit(Result.Success(response))
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
         } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             val errorMessage = errorBody.message
             emit(Result.Error(errorMessage.toString()))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
         }
     }
 
@@ -61,27 +67,43 @@ class UserRepository private constructor(
         try {
             val response = apiService.login(email, password)
             emit(Result.Success(response))
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
         } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             val errorMessage = errorBody.message
             emit(Result.Error(errorMessage.toString()))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
         }
     }
 
     fun getAllStories(
-    ):LiveData<Result<List<ListStoryItem>>> = liveData {
+    ): LiveData<Result<List<ListStoryItem>>> = liveData {
         emit(Result.Loading)
+
+        val token = userPreference.getSession().firstOrNull()?.token
+        if (token.isNullOrEmpty()) {
+            emit(Result.Error("Invalid session. Please login again."))
+            return@liveData
+        }
+
         try {
             val response = apiService.getAllStories().listStory
             emit(Result.Success(response))
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
         } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             val errorMessage = errorBody.message
             emit(Result.Error(errorMessage.toString()))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
         }
     }
+
 
     fun getDetailStory(
         id : String
@@ -91,11 +113,15 @@ class UserRepository private constructor(
         try{
             val response = apiService.getDetailStory(id)
             emit(Result.Success(response))
-        }catch (e: HttpException) {
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
+        } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, DetailResponse::class.java)
             val errorMessage = errorBody.message
             emit(Result.Error(errorMessage))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
         }
     }
 
@@ -111,6 +137,8 @@ class UserRepository private constructor(
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             val errorMessage = errorBody.message
             emit(Result.Error(errorMessage.toString()))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
         }
     }
 

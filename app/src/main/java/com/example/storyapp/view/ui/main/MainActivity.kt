@@ -43,7 +43,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getAllStories()
+        val isLoggedIn = viewModel.getSession().value?.isLogin ?: false
+        if (isLoggedIn) {
+            viewModel.getAllStories()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -125,14 +128,12 @@ class MainActivity : AppCompatActivity() {
         viewModel.getAllStories().observe(this) { result ->
             when (result) {
                 is Result.Loading -> {
-                    // Show progress bar while loading
                     binding.progressBar.visibility = View.VISIBLE
                     binding.tvEmptyMessage.visibility = View.GONE
                     Log.d("MainActivity", "Loading stories...")
                 }
 
                 is Result.Success -> {
-                    // Hide progress bar and display the stories
                     binding.progressBar.visibility = View.GONE
                     val stories = result.data
                     if (stories.isEmpty()) {
@@ -141,7 +142,6 @@ class MainActivity : AppCompatActivity() {
                         binding.tvEmptyMessage.text = getString(R.string.unavailable_story)  // "No stories available"
                         Log.d("MainActivity", "No stories available.")
                     } else {
-                        // Hide empty message and update the adapter
                         binding.tvEmptyMessage.visibility = View.GONE
                         storyAdapter.submitList(stories)
                         Log.d("MainActivity", "Stories loaded: ${stories.size}")
@@ -149,12 +149,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 is Result.Error -> {
-                    // Hide progress bar and show error message
                     binding.progressBar.visibility = View.GONE
                     binding.tvEmptyMessage.visibility = View.VISIBLE
                     binding.tvEmptyMessage.text = getString(R.string.failed_to_load_stories)  // Error loading stories
 
-                    // Access the error message directly, no need for ?. here
                     val errorMessage = result.error
                     Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
                     Log.e("MainActivity", "Error loading stories: $errorMessage")

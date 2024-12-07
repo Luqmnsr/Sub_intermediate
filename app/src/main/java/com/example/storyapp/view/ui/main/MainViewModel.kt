@@ -25,4 +25,5 @@ class MainViewModel(private val repository: UserRepository) : ViewModel() {
     fun getAllStories(): LiveData<Result<List<ListStoryItem>>> {
         return repository.getAllStories()
     }
+
 }
