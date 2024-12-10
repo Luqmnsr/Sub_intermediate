@@ -3,7 +3,6 @@ package com.example.storyapp.view.ui.main
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,10 +16,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.storyapp.data.results.Result
 import com.example.storyapp.R
 import com.example.storyapp.databinding.ActivityMainBinding
-import com.example.storyapp.view.StoryAdapter
+import com.example.storyapp.view.adapter.StoryAdapter
 import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.adapter.LoadingStateAdapter
 import com.example.storyapp.view.authentication.welcome.WelcomeActivity
 import com.example.storyapp.view.ui.detail.DetailActivity
+import com.example.storyapp.view.ui.maps.MapsActivity
 import com.example.storyapp.view.ui.upload.UploadActivity
 
 class MainActivity : AppCompatActivity() {
@@ -43,11 +44,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val isLoggedIn = viewModel.getSession().value?.isLogin ?: false
-        if (isLoggedIn) {
             viewModel.getAllStories()
         }
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -56,6 +54,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.action_maps -> {
+                startActivity(Intent(this, MapsActivity::class.java))
+                true
+            }
             R.id.action_logout -> {
                 val alertDialog = AlertDialog.Builder(this)
                     .setTitle("Confirm Logout")
@@ -106,14 +108,17 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerViews() {
         storyAdapter = StoryAdapter { story ->
             val intent = Intent(this, DetailActivity::class.java)
-            story.id?.let {
+            story.id.let {
                 intent.putExtra("EXTRA_STORY_ID", it)
                 startActivity(intent)
-            } ?: Toast.makeText(this, "Story ID is missing", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.rvStories.apply {
-            adapter = storyAdapter
             layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = storyAdapter.withLoadStateHeaderAndFooter(
+                header = LoadingStateAdapter { storyAdapter.retry() },
+                footer = LoadingStateAdapter { storyAdapter.retry() }
+            )
         }
     }
 
@@ -130,34 +135,23 @@ class MainActivity : AppCompatActivity() {
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.tvEmptyMessage.visibility = View.GONE
-                    Log.d("MainActivity", "Loading stories...")
                 }
 
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
-                    val stories = result.data
-                    if (stories.isEmpty()) {
-                        // Show empty message if no stories
-                        binding.tvEmptyMessage.visibility = View.VISIBLE
-                        binding.tvEmptyMessage.text = getString(R.string.unavailable_story)  // "No stories available"
-                        Log.d("MainActivity", "No stories available.")
-                    } else {
-                        binding.tvEmptyMessage.visibility = View.GONE
-                        storyAdapter.submitList(stories)
-                        Log.d("MainActivity", "Stories loaded: ${stories.size}")
-                    }
+                    binding.tvEmptyMessage.visibility = View.GONE
+
+                    storyAdapter.submitData(lifecycle, result.data)
                 }
 
                 is Result.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.tvEmptyMessage.visibility = View.VISIBLE
-                    binding.tvEmptyMessage.text = getString(R.string.failed_to_load_stories)  // Error loading stories
-
-                    val errorMessage = result.error
-                    Toast.makeText(this, "Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "Error loading stories: $errorMessage")
+                    binding.tvEmptyMessage.text = getString(R.string.failed_to_load_stories)
+                    Toast.makeText(this, "Error: ${result.error}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+
     }
 }

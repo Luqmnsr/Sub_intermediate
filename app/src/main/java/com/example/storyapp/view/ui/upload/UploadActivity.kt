@@ -1,6 +1,7 @@
 package com.example.storyapp.view.ui.upload
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,11 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.example.storyapp.R
 import com.example.storyapp.data.results.Result
 import com.example.storyapp.databinding.ActivityUploadBinding
 import com.example.storyapp.view.ViewModelFactory
 import com.example.storyapp.view.ui.main.MainActivity
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
@@ -32,6 +36,9 @@ class UploadActivity : AppCompatActivity() {
     }
     private lateinit var binding: ActivityUploadBinding
     private var currentImageUri: Uri? = null
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var lat: Double? = null
+    private var lon: Double? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +46,22 @@ class UploadActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupActionBar()
-        setupAction()
+        setupActions()
         setupBackPressedCallback()
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        binding.cbCurrentLocation.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                getCurrentLocation { latitude, longitude ->
+                    lat = latitude
+                    lon = longitude
+                }
+            } else {
+                lat = null
+                lon = null
+            }
+        }
     }
 
     private fun setupActionBar() {
@@ -49,7 +70,7 @@ class UploadActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAction() {
+    private fun setupActions() {
         binding.galleryButton.setOnClickListener {
             galleryLaunch.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
@@ -83,8 +104,10 @@ class UploadActivity : AppCompatActivity() {
                 val requestBody = desc.toRequestBody("text/plain".toMediaType())
                 val requestImageFile = imageFile.asRequestBody("image/jpeg".toMediaType())
                 val multipartBody = MultipartBody.Part.createFormData("photo", imageFile.name, requestImageFile)
+                val latRequest = lat?.toString()?.toRequestBody("text/plain".toMediaType())
+                val lonRequest = lon?.toString()?.toRequestBody("text/plain".toMediaType())
 
-                viewModel.uploadStory(multipartBody, requestBody).observe(this) { response ->
+                viewModel.uploadStory(multipartBody, requestBody, latRequest, lonRequest).observe(this) { response ->
                     when (response) {
                         is Result.Error -> showToast(getString(R.string.failed_upload))
                         Result.Loading -> showLoading(true)
@@ -100,8 +123,33 @@ class UploadActivity : AppCompatActivity() {
         }
     }
 
+    private fun getCurrentLocation(onLocationResult: (lat: Double, lon: Double) -> Unit) {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                100
+            )
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                onLocationResult(it.latitude, it.longitude)
+            } ?: showToast(getString(R.string.location_not_found))
+        }
+    }
+
     private fun showBackPressedDialog() {
-        AlertDialog.Builder(this@UploadActivity).apply {
+        AlertDialog.Builder(this).apply {
             setMessage(R.string.upload_confirmation)
             setPositiveButton(R.string.done) { _, _ ->
                 navigateToMainActivity()

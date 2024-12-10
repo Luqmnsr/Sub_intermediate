@@ -79,4 +79,8 @@
     <string name="empty_name">Nama tidak boleh kosong</string>
     <string name="name_too_short">Nama terlalu pendek</string>
     <string name="email_empty">Email Kosong</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="retry">Ulangi</string>
+    <string name="use_current_location">Gunakan lokasi sekarang\n</string>
+    <string name="location_not_found">Lokasi tidak ditemukan\n</string>
 </resources>

@@ -3,6 +3,11 @@ package com.example.storyapp.data.repository
 import com.example.storyapp.data.api.remote.retrofit.ApiService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.storyapp.data.api.local.database.StoryDatabase
 import com.example.storyapp.data.api.remote.response.DetailResponse
 import com.example.storyapp.data.api.remote.response.ErrorResponse
 import com.example.storyapp.data.api.remote.response.ListStoryItem
@@ -21,7 +26,8 @@ import java.io.IOException
 
 class UserRepository private constructor(
     private val userPreference: UserPreference,
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val storyDatabase: StoryDatabase
 ) {
 
     suspend fun saveSession(user: UserModel) {
@@ -80,18 +86,31 @@ class UserRepository private constructor(
     }
 
     fun getAllStories(
-    ): LiveData<Result<List<ListStoryItem>>> = liveData {
+    ): LiveData<Result<PagingData<ListStoryItem>>> = liveData {
         emit(Result.Loading)
 
         val token = userPreference.getSession().firstOrNull()?.token
         if (token.isNullOrEmpty()) {
-            emit(Result.Error("Invalid session. Please login again."))
+            emit(Result.Error("Invalid session. Please login first."))
             return@liveData
         }
 
         try {
-            val response = apiService.getAllStories().listStory
-            emit(Result.Success(response))
+            @OptIn(ExperimentalPagingApi::class)
+            val pagerFlow = Pager(
+                config = PagingConfig(
+                    pageSize = 5,
+                    enablePlaceholders = false
+                ),
+                remoteMediator = StoryRemoteMediator(storyDatabase, apiService),
+                pagingSourceFactory = {
+                    storyDatabase.storyDao().getAllStory()
+                }
+            ).flow
+
+            pagerFlow.collect { pagingData ->
+                emit(Result.Success(pagingData))
+            }
         } catch (e: IOException) {
             emit(Result.Error("No internet connection"))
         } catch (e: HttpException) {
@@ -105,13 +124,41 @@ class UserRepository private constructor(
     }
 
 
+    fun getStoriesWithLocation(
+        location : Int = 1
+    ): LiveData<Result<List<ListStoryItem>>> = liveData {
+        emit(Result.Loading)
+
+        val token = userPreference.getSession().firstOrNull()?.token
+        if (token.isNullOrEmpty()) {
+            emit(Result.Error("Invalid session. Please login first."))
+            return@liveData
+        }
+
+        try {
+            val response = apiService.getStoriesWithLocation(location).listStory
+            emit(Result.Success(response))
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
+        } catch (e: HttpException) {
+            val jsonInString = e.response()?.errorBody()?.string()
+            val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
+            val errorMessage = errorBody.message
+            emit(Result.Error(errorMessage.toString()))
+        } catch (e: Exception) {
+            emit(Result.Error("Something went wrong: ${e.message}"))
+        }
+    }
+
     fun getDetailStory(
-        id : String
+        id : String,
+        lat : RequestBody? = null,
+        lon : RequestBody? = null
     ): LiveData<Result<DetailResponse>> = liveData {
         emit(Result.Loading)
 
         try{
-            val response = apiService.getDetailStory(id)
+            val response = apiService.getDetailStory(id,lat,lon)
             emit(Result.Success(response))
         } catch (e: IOException) {
             emit(Result.Error("No internet connection"))
@@ -126,13 +173,19 @@ class UserRepository private constructor(
     }
 
     fun uploadStory(
-        file: MultipartBody.Part, description: RequestBody
+        file: MultipartBody.Part,
+        description: RequestBody,
+        lat : RequestBody? = null,
+        lon : RequestBody? = null
     ): LiveData<Result<ErrorResponse>> = liveData {
         emit(Result.Loading)
+
         try{
-            val response = apiService.uploadStory(file,description)
+            val response = apiService.uploadStory(file,description,lat,lon)
             emit(Result.Success(response))
-        }catch (e: HttpException) {
+        } catch (e: IOException) {
+            emit(Result.Error("No internet connection"))
+        } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
             val errorBody = Gson().fromJson(jsonInString, ErrorResponse::class.java)
             val errorMessage = errorBody.message
@@ -147,12 +200,14 @@ class UserRepository private constructor(
         private var instance: UserRepository? = null
         fun getInstance(
             userPreference: UserPreference,
-            apiService: ApiService
+            apiService: ApiService,
+            storyDatabase: StoryDatabase
         ): UserRepository =
             instance ?: synchronized(this) {
                 instance ?: UserRepository(
                     userPreference,
-                    apiService
+                    apiService,
+                    storyDatabase
                 )
             }.also { instance = it }
     }

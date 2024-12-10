@@ -12,8 +12,10 @@ class UploadViewModel(private val repository: UserRepository) : ViewModel() {
 
     fun uploadStory(
         file: MultipartBody.Part,
-        description: RequestBody
+        description: RequestBody,
+        lat : RequestBody? = null,
+        lon : RequestBody? = null
     ): LiveData<Result<ErrorResponse>> {
-        return repository.uploadStory(file, description)
+        return repository.uploadStory(file, description,lat,lon)
     }
 }

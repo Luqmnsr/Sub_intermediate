@@ -9,6 +9,7 @@ import com.example.storyapp.view.authentication.login.LoginViewModel
 import com.example.storyapp.view.authentication.register.RegisterViewModel
 import com.example.storyapp.view.ui.detail.DetailViewModel
 import com.example.storyapp.view.ui.main.MainViewModel
+import com.example.storyapp.view.ui.maps.MapsViewModel
 import com.example.storyapp.view.ui.upload.UploadViewModel
 
 class ViewModelFactory(private val repository: UserRepository) : ViewModelProvider.NewInstanceFactory() {
@@ -30,6 +31,9 @@ class ViewModelFactory(private val repository: UserRepository) : ViewModelProvid
             }
             modelClass.isAssignableFrom(UploadViewModel::class.java) -> {
                 UploadViewModel(repository) as T
+            }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(repository) as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
