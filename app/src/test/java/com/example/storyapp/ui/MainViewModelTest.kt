@@ -39,7 +39,7 @@ class MainViewModelTest {
     private lateinit var userRepository: UserRepository
 
     @Test
-    fun `when Get Story List Should Not Be Null and Return Data`() = runTest {
+    fun `when Get Story Should Not Be Null and Return Data`() = runTest {
         val dummyStories = DataDummy.generateDummyStoryResponse()
         val data: PagingData<ListStoryItem> = StoryPagingSource.snapshot(dummyStories)
         val expectedStories = MutableLiveData<Result<PagingData<ListStoryItem>>>()
