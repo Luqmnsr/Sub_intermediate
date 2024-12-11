@@ -18,7 +18,7 @@ import androidx.core.app.ActivityCompat
 import com.example.storyapp.R
 import com.example.storyapp.data.results.Result
 import com.example.storyapp.databinding.ActivityUploadBinding
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import com.example.storyapp.view.ui.main.MainActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices

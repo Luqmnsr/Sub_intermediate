@@ -12,7 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.storyapp.R
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import com.example.storyapp.data.results.Result
 import com.example.storyapp.databinding.ActivityRegisterBinding
 

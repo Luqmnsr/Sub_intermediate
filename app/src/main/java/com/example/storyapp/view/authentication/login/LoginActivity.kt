@@ -16,7 +16,7 @@ import com.example.storyapp.R
 import com.example.storyapp.data.preference.UserModel
 import com.example.storyapp.data.results.Result
 import com.example.storyapp.databinding.ActivityLoginBinding
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import com.example.storyapp.view.ui.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {

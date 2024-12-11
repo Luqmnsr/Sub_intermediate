@@ -17,7 +17,7 @@ import com.example.storyapp.data.results.Result
 import com.example.storyapp.R
 import com.example.storyapp.databinding.ActivityMainBinding
 import com.example.storyapp.view.adapter.StoryAdapter
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import com.example.storyapp.view.adapter.LoadingStateAdapter
 import com.example.storyapp.view.authentication.welcome.WelcomeActivity
 import com.example.storyapp.view.ui.detail.DetailActivity

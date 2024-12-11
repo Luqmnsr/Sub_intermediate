@@ -10,7 +10,7 @@ import com.example.storyapp.R
 import com.example.storyapp.data.api.remote.response.Story
 import com.example.storyapp.databinding.ActivityDetailBinding
 import com.example.storyapp.data.results.Result
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody

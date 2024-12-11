@@ -16,7 +16,7 @@ import com.example.storyapp.data.results.Result
 import com.example.storyapp.R
 import com.example.storyapp.data.api.remote.response.ListStoryItem
 import com.example.storyapp.databinding.ActivityMapsBinding
-import com.example.storyapp.view.ViewModelFactory
+import com.example.storyapp.view.factory.ViewModelFactory
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
